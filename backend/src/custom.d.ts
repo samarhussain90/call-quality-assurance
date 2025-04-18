@@ -1,0 +1,10 @@
+declare module './routes/auth';
+declare module './routes/webhooks';
+declare module './routes/results';
+declare module './routes/campaigns';
+declare module './routes/calls';
+declare module './middleware/authMiddleware';
+declare module './controllers/webhookController';
+declare module './controllers/authController';
+declare module './controllers/campaignsController';
+declare module './controllers/callsController'; 
