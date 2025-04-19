@@ -8,12 +8,15 @@ interface CampaignContextType {
   clearSelectedCampaign: () => void;
   getCampaignById: (id: string) => Campaign | undefined;
   getAllCampaigns: () => Campaign[];
+  campaigns: Campaign[];
+  addCampaign: (campaign: Campaign) => void;
 }
 
 const CampaignContext = createContext<CampaignContextType | undefined>(undefined);
 
 export function CampaignProvider({ children }: { children: ReactNode }) {
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
+  const [campaigns, setCampaigns] = useState<Campaign[]>(mockCampaigns);
 
   // Clear the selected campaign
   const clearSelectedCampaign = useCallback(() => {
@@ -22,12 +25,17 @@ export function CampaignProvider({ children }: { children: ReactNode }) {
 
   // Get a campaign by ID
   const getCampaignById = useCallback((id: string) => {
-    return mockCampaigns.find(campaign => campaign.id === id);
-  }, []);
+    return campaigns.find(campaign => campaign.id === id);
+  }, [campaigns]);
 
   // Get all campaigns
   const getAllCampaigns = useCallback(() => {
-    return mockCampaigns;
+    return campaigns;
+  }, [campaigns]);
+
+  // Add a new campaign
+  const addCampaign = useCallback((campaign: Campaign) => {
+    setCampaigns(prev => [...prev, campaign]);
   }, []);
 
   return (
@@ -37,7 +45,9 @@ export function CampaignProvider({ children }: { children: ReactNode }) {
         setSelectedCampaign, 
         clearSelectedCampaign,
         getCampaignById,
-        getAllCampaigns
+        getAllCampaigns,
+        campaigns,
+        addCampaign
       }}
     >
       {children}

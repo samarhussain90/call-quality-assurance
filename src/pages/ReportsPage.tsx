@@ -35,7 +35,7 @@ export default function ReportsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const { selectedCampaign } = useCampaign();
-  const { isFiltered, campaignName, metrics } = useCallAnalytics();
+  const { isFiltered, campaignName } = useCallAnalytics();
 
   useEffect(() => {
     setLoading(true);

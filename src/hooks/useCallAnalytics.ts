@@ -6,10 +6,15 @@ export function useCallAnalytics() {
   const { selectedCampaign } = useCampaign();
 
   const filteredCalls = useMemo(() => {
+    console.log('useCallAnalytics - selectedCampaign:', selectedCampaign);
     if (selectedCampaign) {
-      return mockCallsByCampaign[selectedCampaign.id] || [];
+      const calls = mockCallsByCampaign[selectedCampaign.id] || [];
+      console.log('useCallAnalytics - filtered calls for campaign:', calls.length);
+      return calls;
     }
-    return Object.values(mockCallsByCampaign).flat();
+    const allCalls = Object.values(mockCallsByCampaign).flat();
+    console.log('useCallAnalytics - all calls:', allCalls.length);
+    return allCalls;
   }, [selectedCampaign]);
 
   const metrics = useMemo(() => {

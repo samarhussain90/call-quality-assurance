@@ -8,55 +8,22 @@ import { Search, Plus, MoreVertical } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableHeader, TableBody, TableCell, TableHead, TableRow } from "@/components/ui/table";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useCampaign } from "@/contexts/CampaignContext";
 
 interface Campaign {
   id: string;
   name: string;
-  status: "active" | "scheduled" | "completed" | "draft";
+  status: "active" | "paused" | "completed";
   startDate: string;
-  endDate: string;
   totalCalls: number;
   successRate: number;
   agentCount: number;
 }
 
-// Mock data
-const mockCampaigns: Campaign[] = [
-  {
-    id: "camp-1",
-    name: "Q1 Sales Outreach",
-    status: "active",
-    startDate: "2024-01-01",
-    endDate: "2024-03-31",
-    totalCalls: 1500,
-    successRate: 85,
-    agentCount: 10
-  },
-  {
-    id: "camp-2",
-    name: "Customer Feedback Survey",
-    status: "scheduled",
-    startDate: "2024-04-01",
-    endDate: "2024-04-30",
-    totalCalls: 0,
-    successRate: 0,
-    agentCount: 0
-  },
-  {
-    id: "camp-3",
-    name: "Product Launch Follow-up",
-    status: "completed",
-    startDate: "2023-12-01",
-    endDate: "2023-12-31",
-    totalCalls: 800,
-    successRate: 92,
-    agentCount: 8
-  }
-];
-
 export default function CampaignsPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { campaigns } = useCampaign();
   const [searchQuery, setSearchQuery] = useState("");
   const [showNewCampaignModal, setShowNewCampaignModal] = useState(false);
   
@@ -71,19 +38,17 @@ export default function CampaignsPage() {
     switch (status) {
       case "active":
         return "success";
-      case "scheduled":
+      case "paused":
         return "warning";
       case "completed":
         return "secondary";
-      case "draft":
-        return "outline";
       default:
         return "default";
     }
   };
 
   // Filter campaigns based on search query and current tab
-  const filteredCampaigns = mockCampaigns.filter(campaign => {
+  const filteredCampaigns = campaigns.filter(campaign => {
     const matchesSearch = campaign.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesTab = currentTab === "all" || campaign.status === currentTab;
     return matchesSearch && matchesTab;
@@ -133,7 +98,7 @@ export default function CampaignsPage() {
           <TabsList className="mb-6">
             <TabsTrigger value="all">All Campaigns</TabsTrigger>
             <TabsTrigger value="active">Active</TabsTrigger>
-            <TabsTrigger value="scheduled">Scheduled</TabsTrigger>
+            <TabsTrigger value="paused">Paused</TabsTrigger>
             <TabsTrigger value="completed">Completed</TabsTrigger>
           </TabsList>
 

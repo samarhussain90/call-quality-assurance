@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCallAnalytics } from "@/hooks/useCallAnalytics";
 import { useCampaign } from '@/contexts/CampaignContext';
@@ -6,19 +6,6 @@ import { useCampaign } from '@/contexts/CampaignContext';
 export function Overview() {
   const { selectedCampaign } = useCampaign();
   const { metrics, isFiltered, campaignName, formatDuration } = useCallAnalytics();
-
-  useEffect(() => {
-    // Listen for campaign selection events
-    const handleCampaignSelected = () => {
-      // Force a re-render when a campaign is selected
-      window.location.reload();
-    };
-
-    window.addEventListener('campaignSelected', handleCampaignSelected);
-    return () => {
-      window.removeEventListener('campaignSelected', handleCampaignSelected);
-    };
-  }, []);
 
   return (
     <div className="space-y-4">

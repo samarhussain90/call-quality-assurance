@@ -5,52 +5,21 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Search, Plus } from "lucide-react";
+import { useCampaign } from "@/contexts/CampaignContext";
 
 interface Campaign {
   id: string;
   name: string;
-  status: "active" | "scheduled" | "completed" | "draft";
-  type: "outbound" | "inbound";
+  status: "active" | "paused" | "completed";
   totalCalls: number;
   successRate: number;
   lastRun: string;
 }
 
-// Mock data for campaigns
-const mockCampaigns: Campaign[] = [
-  {
-    id: "1",
-    name: "Sales Follow-up Q1",
-    status: "active",
-    type: "outbound",
-    totalCalls: 150,
-    successRate: 75,
-    lastRun: "2024-03-15T10:00:00Z",
-  },
-  {
-    id: "2",
-    name: "Customer Feedback",
-    status: "scheduled",
-    type: "outbound",
-    totalCalls: 0,
-    successRate: 0,
-    lastRun: "2024-03-20T14:00:00Z",
-  },
-  {
-    id: "3",
-    name: "Support Follow-up",
-    status: "completed",
-    type: "inbound",
-    totalCalls: 300,
-    successRate: 82,
-    lastRun: "2024-03-10T09:00:00Z",
-  },
-];
-
 export function CampaignListPage() {
   const navigate = useNavigate();
+  const { campaigns } = useCampaign();
   const [searchQuery, setSearchQuery] = useState("");
-  const [campaigns] = useState<Campaign[]>(mockCampaigns);
 
   const filteredCampaigns = campaigns.filter((campaign) =>
     campaign.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -60,12 +29,10 @@ export function CampaignListPage() {
     switch (status) {
       case "active":
         return "bg-green-500";
-      case "scheduled":
+      case "paused":
         return "bg-blue-500";
       case "completed":
         return "bg-gray-500";
-      case "draft":
-        return "bg-yellow-500";
       default:
         return "bg-gray-500";
     }
@@ -101,7 +68,7 @@ export function CampaignListPage() {
               <div
                 key={campaign.id}
                 className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent cursor-pointer"
-                onClick={() => navigate(`/campaign-calls/${campaign.id}`)}
+                onClick={() => navigate(`/campaigns/${campaign.id}/calls`)}
               >
                 <div>
                   <h3 className="font-medium">{campaign.name}</h3>
@@ -109,9 +76,6 @@ export function CampaignListPage() {
                     <Badge variant="secondary" className={getStatusColor(campaign.status)}>
                       {campaign.status}
                     </Badge>
-                    <span className="text-sm text-muted-foreground">
-                      {campaign.type}
-                    </span>
                   </div>
                 </div>
                 <div className="text-right">

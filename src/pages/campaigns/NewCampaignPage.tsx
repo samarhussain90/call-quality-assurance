@@ -6,11 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useCampaign } from '@/contexts/CampaignContext';
 import { v4 as uuidv4 } from 'uuid';
-import { Campaign, mockCampaigns } from '@/mocks/campaigns';
+import { Campaign } from '@/mocks/campaigns';
 
 export function NewCampaignPage() {
   const navigate = useNavigate();
-  const { setSelectedCampaign } = useCampaign();
+  const { setSelectedCampaign, addCampaign } = useCampaign();
   const [name, setName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -29,9 +29,8 @@ export function NewCampaignPage() {
         agentCount: 0
       };
 
-      // In a real app, this would be an API call
-      // For now, we'll just update the local state and mock data
-      mockCampaigns.push(newCampaign);
+      // Use the context's addCampaign instead of mutating mockCampaigns
+      addCampaign(newCampaign);
       setSelectedCampaign(newCampaign);
       
       // Navigate to the new campaign's call log
