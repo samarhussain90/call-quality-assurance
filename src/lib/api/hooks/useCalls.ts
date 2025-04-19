@@ -61,7 +61,7 @@ export const callKeys = {
 
 // API functions
 const fetchCalls = async (campaignId: string) => {
-  const { data } = await apiClient.get<Call[]>(`/campaigns/${campaignId}/calls`);
+  const { data } = await apiClient.get<Call[]>(`/campaign-calls/${campaignId}/calls`);
   return data;
 };
 

@@ -1,91 +1,90 @@
-import { createContext, useState, useEffect, ReactNode, useContext } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
-import { apiLogin, apiSignup } from "@/api/index";
-
-interface User {
-  id: string;
-  fullName: string;
-  email: string;
-}
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { User, UserRole, ROLE_HIERARCHY, DEFAULT_ROLE_PERMISSIONS } from '@/types/auth';
 
 interface AuthContextType {
-  isAuthenticated: boolean;
   user: User | null;
-  token: string | null;
+  isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
+  hasPermission: (requiredRole: UserRole) => boolean;
+  hasSpecificPermission: (permissionId: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const navigate = useNavigate();
-  // Initialize auth state from localStorage
-  const storedToken = localStorage.getItem("token");
-  const storedUser = localStorage.getItem("user");
-  const initialToken = storedToken;
-  const initialUser = storedUser ? (JSON.parse(storedUser) as User) : null;
-  const [token, setToken] = useState<string | null>(initialToken);
-  const [user, setUser] = useState<User | null>(initialUser);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!initialToken && !!initialUser);
+const mockUser: User = {
+  id: '1',
+  name: 'John Smith',
+  email: 'john.smith@example.com',
+  role: 'admin',
+  department: 'Operations',
+};
 
-  const login = async (email: string, password: string) => {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
     try {
-      const response = await apiLogin(email, password);
-      const { token: newToken, user: newUser } = response;
-      localStorage.setItem("token", newToken);
-      localStorage.setItem("user", JSON.stringify(newUser));
-      setToken(newToken);
-      setUser(newUser);
-      setIsAuthenticated(true);
-      navigate("/campaigns");
-    } catch (err: any) {
-      throw new Error(err.response?.data?.error || err.message || "Login failed");
+      // Simulate API call to check authentication status
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setUser(mockUser);
+    } catch (error) {
+      console.error('Auth check failed:', error);
+      setUser(null);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const signup = async (name: string, email: string, password: string) => {
+  const login = async (email: string, password: string) => {
     try {
-      await apiSignup(name, email, password);
-      navigate("/login");
-    } catch (err: any) {
-      throw new Error(err.response?.data?.error || err.message || "Signup failed");
+      setIsLoading(true);
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setUser(mockUser);
+    } catch (error) {
+      console.error('Login failed:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setToken(null);
     setUser(null);
-    setIsAuthenticated(false);
-    navigate("/login");
   };
 
-  return (
-    <AuthContext.Provider
-      value={{ isAuthenticated, user, token, login, signup, logout }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
-};
+  const hasPermission = (requiredRole: UserRole): boolean => {
+    if (!user) return false;
+    return ROLE_HIERARCHY[user.role] >= ROLE_HIERARCHY[requiredRole];
+  };
 
-// Custom hook for easier context usage
-export const useAuth = (): AuthContextType => {
+  const hasSpecificPermission = (permissionId: string): boolean => {
+    if (!user) return false;
+    return DEFAULT_ROLE_PERMISSIONS[user.role].includes(permissionId);
+  };
+
+  const value = {
+    user,
+    isLoading,
+    login,
+    logout,
+    hasPermission,
+    hasSpecificPermission,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within AuthProvider");
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-};
-
-// ProtectedRoute component to guard private routes
-export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-  const { isAuthenticated } = useAuth();
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-  return children;
-}; 
+} 

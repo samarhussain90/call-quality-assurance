@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import {
   Breadcrumb,
@@ -8,6 +7,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { ChevronRight } from "lucide-react";
 
 interface CallBreadcrumbsProps {
   campaignId?: string;
@@ -27,7 +27,7 @@ export function CallBreadcrumbs({ campaignId, callId }: CallBreadcrumbsProps) {
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link to={`/campaigns/${campaignId}`}>Campaign Alpha</Link>
+              <Link to={`/campaigns/${campaignId}/calls`}>Campaign Calls</Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />

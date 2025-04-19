@@ -23,6 +23,7 @@ export function CallOverviewTab({ callId }: CallOverviewTabProps) {
   const [notes, setNotes] = useState("");
   const [newTag, setNewTag] = useState("");
   const [tags, setTags] = useState<string[]>(["Important", "Follow-up"]);
+  const [notesSaved, setNotesSaved] = useState(false);
 
   // Mock scoring data
   const scoreMetrics: ScoreMetric[] = [
@@ -45,8 +46,9 @@ export function CallOverviewTab({ callId }: CallOverviewTabProps) {
   };
 
   const handleSaveNotes = () => {
-    // TODO: Implement save notes functionality
-    console.log("Saving notes:", notes);
+    // In a real implementation, this would save the notes to the backend
+    setNotesSaved(true);
+    setTimeout(() => setNotesSaved(false), 2000);
   };
 
   const handleAddTag = () => {

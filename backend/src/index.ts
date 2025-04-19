@@ -1,20 +1,8 @@
-import dotenv from 'dotenv';
-import express from 'express';
-import cors from 'cors';
-
-// Load environment variables from .env file
-dotenv.config();
-
-// @ts-ignore: TS cannot resolve local modules in editor workspace
-import authRoutes from './routes/auth';
-// @ts-ignore: TS cannot resolve local modules in editor workspace
-import webhookRoutes from './routes/webhooks';
-// @ts-ignore: TS cannot resolve local modules in editor workspace
-import resultsRoutes from './routes/results';
-// @ts-ignore: TS cannot resolve local modules in editor workspace
-import campaignsRoutes from './routes/campaigns';
-// @ts-ignore: TS cannot resolve local modules in editor workspace
-import callsRoutes from './routes/calls';
+import "dotenv/config";
+import express from "express";
+import cors from "cors";
+import { AppDataSource } from "./config/database";
+import authRoutes from "./routes/auth.routes";
 
 const app = express();
 
@@ -22,20 +10,24 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Route registration
-app.use('/api/v1/auth', authRoutes);
-app.use('/webhooks', webhookRoutes);
-app.use('/api/v1/results', resultsRoutes);
-app.use('/api/v1/campaigns', campaignsRoutes);
-app.use('/api/v1/calls', callsRoutes);
+// Routes
+app.use("/api/auth", authRoutes);
 
 // Health check
-app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'ok' });
+app.get("/api/health", (req, res) => {
+    res.json({ status: "ok" });
 });
 
-// Start server
-const port = process.env.PORT || 4000;
-app.listen(port, () => {
-  console.log(`🚀 Server listening on port ${port}`);
-}); 
+// Initialize database and start server
+const PORT = process.env.PORT || 4000;
+
+AppDataSource.initialize()
+    .then(() => {
+        console.log("Database connected");
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
+        });
+    })
+    .catch((error) => {
+        console.error("Error during Data Source initialization:", error);
+    }); 

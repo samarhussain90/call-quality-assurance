@@ -164,6 +164,9 @@ const mockCallDetails: { [key: string]: any } = {
   }
 };
 
+// Utility function for simulating API delays
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 // Auth
 export async function apiLogin(email: string, password: string): Promise<{ token: string; user: { id: string; fullName: string; email: string }; organizationId?: string }> {
   // Mock login - in a real app, this would call the backend
@@ -323,26 +326,28 @@ export async function apiBulkUpdateCalls(payload: { callIds: string[]; status?: 
 }
 
 // Fetch user profile
-export async function apiFetchUserProfile(): Promise<{ name: string; email: string }> {
-  // Mock profile - in a real app, this would call the backend
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({ name: "Test User", email: "test@example.com" });
-    }, 500);
-  });
-}
+export const apiFetchUserProfile = async () => {
+  await delay(1000);
+  return {
+    name: "John Doe",
+    email: "john.doe@example.com",
+    notifications: {
+      email: true,
+      push: true,
+      sms: false
+    },
+    twoFactorEnabled: false
+  };
+};
 
 // Update user profile
-export async function apiUpdateUserProfile(
-  profileData: { name: string; email: string }
-): Promise<{ success: boolean }> {
-  // Mock profile update - in a real app, this would call the backend
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({ success: true });
-    }, 500);
-  });
-}
+export const apiUpdateUserProfile = async (data: { name: string; email: string }) => {
+  await delay(1000);
+  return {
+    success: true,
+    data
+  };
+};
 
 // Fetch organization settings
 export async function apiFetchOrganizationSettings(): Promise<{ name: string; webhookUrl: string }> {

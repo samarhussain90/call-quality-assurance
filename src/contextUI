@@ -1,0 +1,5 @@
+**Context:**
+MAJOR RESTRUCTURING REQUIRED. The current application structure, especially the "Campaigns" section and sidebar navigation, does not match the desired user experience. We need to fundamentally change the sidebar and content display to mimic the structure shown in the `qa.neuraldoc.ai` example (reference video provided). The goal is a sidebar listing specific Campaigns (by name/type), and clicking one displays its associated Call Log data. The existing "Analytics" section duplication also needs definitive resolution.
+
+**Overall Goal:**
+Restructure the main sidebar navigation to list specific Campaigns dynamically. Implement the core functionality where selecting a campaign in the sidebar displays its associated call log data (including details like Agent, Transcription, Recording URL) in the main content area. Fix the persistent Analytics section duplication. Remove obsolete navigation items.

@@ -26,13 +26,13 @@ export function CallMetadata({ metadata }: CallMetadataProps) {
   const getComplianceIcon = (status: string) => {
     switch (status) {
       case 'compliant':
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
+        return <CheckCircle className="w-4 h-4 text-green-400" />;
       case 'warning':
-        return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
+        return <AlertTriangle className="w-4 h-4 text-yellow-400" />;
       case 'non-compliant':
-        return <XCircle className="h-4 w-4 text-red-500" />;
+        return <XCircle className="w-4 h-4 text-red-400" />;
       default:
-        return <HelpCircle className="h-4 w-4 text-gray-500" />;
+        return <HelpCircle className="w-4 h-4 text-gray-400" />;
     }
   };
 
@@ -55,18 +55,40 @@ export function CallMetadata({ metadata }: CallMetadataProps) {
       <CardContent className="space-y-6">
         {/* Quality Score */}
         <div>
-          <h3 className="text-sm font-medium mb-2 text-white">Call Quality</h3>
+          <h3 className="text-sm font-medium mb-2 text-white">Quality Score</h3>
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-lg bg-gray-900 text-white border-gray-700">
+            <Badge 
+              variant="outline"
+              className={`${
+                metadata.quality.score >= 80
+                  ? "bg-green-900/20 text-green-400 border-green-800"
+                  : metadata.quality.score >= 60
+                  ? "bg-yellow-900/20 text-yellow-400 border-yellow-800"
+                  : "bg-red-900/20 text-red-400 border-red-800"
+              }`}
+            >
               {metadata.quality.score}%
             </Badge>
-            {metadata.quality.issues.length > 0 && (
-              <span className="text-sm text-gray-400">
-                ({metadata.quality.issues.length} issues detected)
-              </span>
-            )}
           </div>
         </div>
+
+        {/* Quality Issues */}
+        {metadata.quality.issues.length > 0 && (
+          <div>
+            <h3 className="text-sm font-medium mb-2 text-white">Quality Issues</h3>
+            <div className="space-y-2">
+              {metadata.quality.issues.map((issue, index) => (
+                <div 
+                  key={index}
+                  className="flex items-start gap-2 p-2 rounded-lg bg-gray-900/50"
+                >
+                  <AlertTriangle className="w-4 h-4 text-yellow-400 mt-0.5" />
+                  <p className="text-sm text-gray-300">{issue}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <Separator className="bg-gray-700" />
 
@@ -74,25 +96,39 @@ export function CallMetadata({ metadata }: CallMetadataProps) {
         <div>
           <h3 className="text-sm font-medium mb-2 text-white">Compliance Status</h3>
           <div className="flex items-center gap-2">
+            {getComplianceIcon(metadata.compliance.status)}
             <Badge 
-              variant={metadata.compliance.status === 'compliant' ? 'secondary' : 'destructive'}
-              className="bg-gray-900 text-white border-gray-700"
+              variant="outline"
+              className={`${
+                metadata.compliance.status === 'compliant'
+                  ? "bg-green-900/20 text-green-400 border-green-800"
+                  : metadata.compliance.status === 'warning'
+                  ? "bg-yellow-900/20 text-yellow-400 border-yellow-800"
+                  : "bg-red-900/20 text-red-400 border-red-800"
+              }`}
             >
-              {getComplianceIcon(metadata.compliance.status)}
-              <span className="ml-1 capitalize">{metadata.compliance.status}</span>
+              {metadata.compliance.status}
             </Badge>
           </div>
-          {metadata.compliance.violations.length > 0 && (
-            <ul className="mt-2 text-sm text-gray-400">
-              {metadata.compliance.violations.map((violation, index) => (
-                <li key={index} className="flex items-center gap-1">
-                  <AlertTriangle className="h-3 w-3 text-yellow-500" />
-                  {violation}
-                </li>
-              ))}
-            </ul>
-          )}
         </div>
+
+        {/* Compliance Violations */}
+        {metadata.compliance.violations.length > 0 && (
+          <div>
+            <h3 className="text-sm font-medium mb-2 text-white">Violations</h3>
+            <div className="space-y-2">
+              {metadata.compliance.violations.map((violation, index) => (
+                <div 
+                  key={index}
+                  className="flex items-start gap-2 p-2 rounded-lg bg-gray-900/50"
+                >
+                  <XCircle className="w-4 h-4 text-red-400 mt-0.5" />
+                  <p className="text-sm text-gray-300">{violation}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <Separator className="bg-gray-700" />
 
@@ -105,7 +141,7 @@ export function CallMetadata({ metadata }: CallMetadataProps) {
                 <Badge 
                   key={index} 
                   variant="outline"
-                  className="bg-gray-900 text-white border-gray-700"
+                  className="bg-gray-900/50 text-gray-300 border-gray-700"
                 >
                   {keyword}
                 </Badge>
@@ -119,7 +155,7 @@ export function CallMetadata({ metadata }: CallMetadataProps) {
                 <Badge 
                   key={index} 
                   variant="outline"
-                  className="bg-gray-900 text-white border-gray-700"
+                  className="bg-gray-900/50 text-gray-300 border-gray-700"
                 >
                   {topic}
                 </Badge>
@@ -136,7 +172,13 @@ export function CallMetadata({ metadata }: CallMetadataProps) {
           <div className="flex items-center gap-2">
             <Badge 
               variant={getSentimentColor(metadata.sentiment.overall)}
-              className="bg-gray-900 text-white border-gray-700"
+              className={`${
+                metadata.sentiment.overall === 'positive'
+                  ? "bg-green-900/20 text-green-400 border-green-800"
+                  : metadata.sentiment.overall === 'negative'
+                  ? "bg-red-900/20 text-red-400 border-red-800"
+                  : "bg-gray-900/20 text-gray-400 border-gray-800"
+              }`}
             >
               {metadata.sentiment.overall}
             </Badge>
