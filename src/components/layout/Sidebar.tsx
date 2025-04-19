@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useCampaign } from '@/contexts/CampaignContext';
 import { cn } from '@/lib/utils';
@@ -20,203 +20,287 @@ import {
   Zap,
   HelpCircle,
   Bot,
+  Search
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { mockCampaigns } from "@/mocks/campaigns";
+import {
+  CommandDialog,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+} from "@/components/ui/command";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 export function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { campaigns, selectedCampaign, setSelectedCampaign, clearSelectedCampaign } = useCampaign();
+  const { selectedCampaign, setSelectedCampaign } = useCampaign();
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
+  const [expandedCampaigns, setExpandedCampaigns] = useState<Record<string, boolean>>({});
 
-  const isActive = (path: string) => {
-    return location.pathname === path;
-  };
-
-  const handleCampaignClick = (campaignId: string) => {
-    const campaign = campaigns.find(c => c.id === campaignId);
+  const handleCampaignSelect = (campaignId: string) => {
+    const campaign = mockCampaigns.find(c => c.id === campaignId);
     if (campaign) {
       setSelectedCampaign(campaign);
-      navigate(`/campaign/${campaignId}`);
+      navigate(`/campaign/${campaignId}/calls`);
+      setExpandedCampaigns(prev => ({
+        ...prev,
+        [campaignId]: !prev[campaignId]
+      }));
+    }
+    setIsSearchOpen(false);
+  };
+
+  const handleSubItemClick = (campaignId: string, path: string) => {
+    const campaign = mockCampaigns.find(c => c.id === campaignId);
+    if (campaign) {
+      setSelectedCampaign(campaign);
+      navigate(`/campaign/${campaignId}/${path}`);
     }
   };
 
-  const handleDashboardClick = () => {
-    clearSelectedCampaign();
-    navigate('/dashboard');
-  };
-
-  const handleReportClick = (path: string) => {
-    if (selectedCampaign) {
-      navigate(path);
+  const getStatusVariant = (status: string) => {
+    switch (status) {
+      case "active":
+        return "bg-green-500";
+      case "paused":
+        return "bg-yellow-500";
+      case "completed":
+        return "bg-blue-500";
+      default:
+        return "bg-gray-500";
     }
   };
 
-  // Extract campaign ID from URL for highlighting
-  const getCampaignIdFromPath = () => {
-    const pathParts = location.pathname.split('/');
-    const campaignIndex = pathParts.indexOf('campaign');
-    if (campaignIndex !== -1 && pathParts[campaignIndex + 1]) {
-      return pathParts[campaignIndex + 1];
-    }
-    return selectedCampaign?.id;
+  const isSubItemActive = (campaignId: string, path: string) => {
+    return location.pathname === `/campaign/${campaignId}/${path}`;
   };
-
-  const currentCampaignId = getCampaignIdFromPath();
 
   return (
-    <div className="flex h-full flex-col border-r bg-background">
+    <div className="flex h-full flex-col border-r bg-background w-64">
       <div className="flex h-14 items-center border-b px-4">
-        <Link to="/" className="flex items-center gap-2 font-semibold">
-          <Phone className="h-6 w-6" />
-          <span>Neural Call</span>
-        </Link>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="mr-2"
+          onClick={() => setIsExpanded(!isExpanded)}
+        >
+          {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+        </Button>
+        <span className="font-semibold">Campaigns</span>
       </div>
-      <div className="flex-1 overflow-auto py-2">
-        <nav className="grid items-start px-2 text-sm font-medium">
-          <Link
-            to="/dashboard"
-            onClick={handleDashboardClick}
-            className={cn(
-              'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground',
-              isActive('/dashboard') && 'bg-accent text-foreground'
-            )}
-          >
-            <LayoutDashboard className="h-4 w-4" />
-            Dashboard
-          </Link>
-          
-          {/* Campaigns Section */}
-          <div className="mt-4">
-            <div className="flex items-center justify-between px-3 text-xs font-semibold uppercase text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <ChevronDown className="h-4 w-4" />
-                Campaigns
-              </div>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-6 w-6" 
-                onClick={() => navigate('/campaigns/new')}
+      <div className="flex-1 overflow-auto">
+        <div className="space-y-4 py-4">
+          <div className="px-3 py-2">
+            <div className="space-y-1">
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => navigate("/")}
               >
-                <Plus className="h-4 w-4" />
+                <LayoutDashboard className="mr-2 h-4 w-4" />
+                Dashboard
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => setIsSearchOpen(true)}
+              >
+                <Search className="mr-2 h-4 w-4" />
+                Search Campaigns
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => navigate("/campaigns/new")}
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                New Campaign
               </Button>
             </div>
-            <div className="mt-2 space-y-1">
-              {campaigns.map((campaign) => (
-                <div key={campaign.id}>
-                  <button
-                    onClick={() => handleCampaignClick(campaign.id)}
-                    className={cn(
-                      'flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-all hover:text-foreground',
-                      currentCampaignId === campaign.id && 'bg-accent text-foreground'
-                    )}
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                    {campaign.name}
-                  </button>
-                  
-                  {/* Campaign-specific features - show when campaign is selected or active */}
-                  {(currentCampaignId === campaign.id || selectedCampaign?.id === campaign.id) && (
-                    <div className="ml-4 mt-1 space-y-1">
-                      <button
-                        onClick={() => handleReportClick(`/campaign/${campaign.id}`)}
-                        className={cn(
-                          'flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-all hover:text-foreground',
-                          isActive(`/campaign/${campaign.id}`) && 'bg-accent text-foreground'
-                        )}
-                      >
-                        <BarChart3 className="h-4 w-4" />
-                        Overview
-                      </button>
-                      <button
-                        onClick={() => handleReportClick('/analytics/insights')}
-                        className={cn(
-                          'flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-all hover:text-foreground',
-                          isActive('/analytics/insights') && 'bg-accent text-foreground'
-                        )}
-                      >
-                        <Brain className="h-4 w-4" />
-                        AI Insights
-                      </button>
-                      <button
-                        onClick={() => handleReportClick('/performance/quality')}
-                        className={cn(
-                          'flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-all hover:text-foreground',
-                          isActive('/performance/quality') && 'bg-accent text-foreground'
-                        )}
-                      >
-                        <LineChart className="h-4 w-4" />
-                        Quality Trends
-                      </button>
-                      <button
-                        onClick={() => handleReportClick('/performance/compliance')}
-                        className={cn(
-                          'flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-all hover:text-foreground',
-                          isActive('/performance/compliance') && 'bg-accent text-foreground'
-                        )}
-                      >
-                        <Shield className="h-4 w-4" />
-                        Compliance
-                      </button>
-                      <button
-                        onClick={() => handleReportClick('/performance/campaigns')}
-                        className={cn(
-                          'flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-all hover:text-foreground',
-                          isActive('/performance/campaigns') && 'bg-accent text-foreground'
-                        )}
-                      >
-                        <Zap className="h-4 w-4" />
-                        Performance
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ))}
+          </div>
+          {isExpanded && (
+            <div className="px-3 py-2">
+              <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
+                Active Campaigns
+              </h2>
+              <div className="space-y-1">
+                {mockCampaigns
+                  .filter(campaign => campaign.status === "active")
+                  .map(campaign => (
+                    <Collapsible
+                      key={campaign.id}
+                      open={expandedCampaigns[campaign.id]}
+                      onOpenChange={(open) => 
+                        setExpandedCampaigns(prev => ({
+                          ...prev,
+                          [campaign.id]: open
+                        }))
+                      }
+                    >
+                      <CollapsibleTrigger asChild>
+                        <Button
+                          variant={selectedCampaign?.id === campaign.id ? "secondary" : "ghost"}
+                          className="w-full justify-start"
+                        >
+                          <div className="flex items-center">
+                            <div
+                              className={`mr-2 h-2 w-2 rounded-full ${getStatusVariant(
+                                campaign.status
+                              )}`}
+                            />
+                            <span className="truncate">{campaign.name}</span>
+                            <ChevronRight
+                              className={cn(
+                                "ml-auto h-4 w-4 transition-transform",
+                                expandedCampaigns[campaign.id] && "rotate-90"
+                              )}
+                            />
+                          </div>
+                        </Button>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="pl-4">
+                        <div className="space-y-1 py-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className={cn(
+                              "w-full justify-start",
+                              isSubItemActive(campaign.id, "calls") && "bg-accent"
+                            )}
+                            onClick={() => handleSubItemClick(campaign.id, "calls")}
+                          >
+                            <Phone className="mr-2 h-4 w-4" />
+                            Call Log
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className={cn(
+                              "w-full justify-start",
+                              isSubItemActive(campaign.id, "overview") && "bg-accent"
+                            )}
+                            onClick={() => handleSubItemClick(campaign.id, "overview")}
+                          >
+                            <BarChart3 className="mr-2 h-4 w-4" />
+                            Overview
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className={cn(
+                              "w-full justify-start",
+                              isSubItemActive(campaign.id, "insights") && "bg-accent"
+                            )}
+                            onClick={() => handleSubItemClick(campaign.id, "insights")}
+                          >
+                            <Brain className="mr-2 h-4 w-4" />
+                            AI Insights
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className={cn(
+                              "w-full justify-start",
+                              isSubItemActive(campaign.id, "quality") && "bg-accent"
+                            )}
+                            onClick={() => handleSubItemClick(campaign.id, "quality")}
+                          >
+                            <LineChart className="mr-2 h-4 w-4" />
+                            Quality Trends
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className={cn(
+                              "w-full justify-start",
+                              isSubItemActive(campaign.id, "compliance") && "bg-accent"
+                            )}
+                            onClick={() => handleSubItemClick(campaign.id, "compliance")}
+                          >
+                            <Shield className="mr-2 h-4 w-4" />
+                            Compliance
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className={cn(
+                              "w-full justify-start",
+                              isSubItemActive(campaign.id, "performance") && "bg-accent"
+                            )}
+                            onClick={() => handleSubItemClick(campaign.id, "performance")}
+                          >
+                            <Zap className="mr-2 h-4 w-4" />
+                            Performance
+                          </Button>
+                        </div>
+                      </CollapsibleContent>
+                    </Collapsible>
+                  ))}
+              </div>
+            </div>
+          )}
+          <div className="px-3 py-2">
+            <div className="space-y-1">
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => navigate("/analytics")}
+              >
+                <BarChart3 className="mr-2 h-4 w-4" />
+                Analytics
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => navigate("/reports")}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                Reports
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => navigate("/settings")}
+              >
+                <Settings className="mr-2 h-4 w-4" />
+                Settings
+              </Button>
             </div>
           </div>
-          
-          {/* Support Section */}
-          <div className="mt-4">
-            <div className="flex items-center px-3 text-xs font-semibold uppercase text-muted-foreground">
-              <ChevronDown className="h-4 w-4 mr-2" />
-              Support
-            </div>
-            <div className="mt-2 space-y-1">
-              <Link
-                to="/ai-assistant"
-                className={cn(
-                  'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground',
-                  isActive('/ai-assistant') && 'bg-accent text-foreground'
-                )}
-              >
-                <Bot className="h-4 w-4" />
-                AI Assistant
-              </Link>
-              <Link
-                to="/help"
-                className={cn(
-                  'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground',
-                  isActive('/help') && 'bg-accent text-foreground'
-                )}
-              >
-                <HelpCircle className="h-4 w-4" />
-                Help & Support
-              </Link>
-            </div>
-          </div>
-          
-          <Link
-            to="/settings"
-            className={cn(
-              'mt-4 flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-foreground',
-              isActive('/settings') && 'bg-accent text-foreground'
-            )}
-          >
-            <Settings className="h-4 w-4" />
-            Settings
-          </Link>
-        </nav>
+        </div>
       </div>
+      <CommandDialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+        <CommandInput placeholder="Search campaigns..." />
+        <CommandList>
+          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandGroup heading="Campaigns">
+            {mockCampaigns.map((campaign) => (
+              <CommandItem
+                key={campaign.id}
+                onSelect={() => handleCampaignSelect(campaign.id)}
+              >
+                <div className="flex items-center">
+                  <div
+                    className={`mr-2 h-2 w-2 rounded-full ${getStatusVariant(
+                      campaign.status
+                    )}`}
+                  />
+                  <span>{campaign.name}</span>
+                </div>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </CommandList>
+      </CommandDialog>
     </div>
   );
 } 

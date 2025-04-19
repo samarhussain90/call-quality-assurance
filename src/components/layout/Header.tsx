@@ -32,7 +32,8 @@ import {
   ChevronDown,
   LayoutDashboard,
   BarChart3,
-  FileText
+  FileText,
+  Phone
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { mockCampaigns } from "@/mocks/campaigns";
@@ -72,32 +73,11 @@ export function Header() {
       <div className="container flex h-14 items-center">
         <div className="mr-4 hidden md:flex">
           <Link to="/" className="mr-6 flex items-center space-x-2">
+            <Phone className="h-6 w-6" />
             <span className="hidden font-bold sm:inline-block">
               Neural Call
             </span>
           </Link>
-          <nav className="flex items-center space-x-6 text-sm font-medium">
-            <Link
-              to="/analytics/overview"
-              className={`transition-colors hover:text-foreground/80 ${
-                location.pathname.startsWith("/analytics")
-                  ? "text-foreground"
-                  : "text-foreground/60"
-              }`}
-            >
-              Analytics
-            </Link>
-            <Link
-              to="/reports"
-              className={`transition-colors hover:text-foreground/80 ${
-                location.pathname.startsWith("/reports")
-                  ? "text-foreground"
-                  : "text-foreground/60"
-              }`}
-            >
-              Reports
-            </Link>
-          </nav>
         </div>
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
           <div className="w-full flex-1 md:w-auto md:flex-none">
@@ -107,7 +87,7 @@ export function Header() {
               onClick={() => setIsSearchOpen(true)}
             >
               <Search className="mr-2 h-4 w-4" />
-              <span className="hidden md:inline-block">Search...</span>
+              <span className="hidden md:inline-block">Search campaigns...</span>
             </Button>
           </div>
           <nav className="flex items-center">

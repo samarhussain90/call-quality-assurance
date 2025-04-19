@@ -91,8 +91,16 @@ export default function App() {
           {/* Campaign Routes */}
           <Route path="campaigns" element={<CampaignsPage />} />
           <Route path="campaigns/new" element={<NewCampaignPage />} />
-          <Route path="campaign/:campaignId" element={<UnifiedCampaignView />} />
-          <Route path="campaigns/:campaignId/calls/:callId" element={<CallDetailPage />} />
+          <Route path="campaign/:campaignId" element={<UnifiedCampaignView />}>
+            <Route index element={<Navigate to="calls" replace />} />
+            <Route path="calls" element={<CallAnalytics />} />
+            <Route path="overview" element={<Overview />} />
+            <Route path="insights" element={<AIInsights />} />
+            <Route path="quality" element={<QualityTrends />} />
+            <Route path="compliance" element={<ComplianceMonitoring />} />
+            <Route path="performance" element={<CampaignPerformance />} />
+          </Route>
+          <Route path="campaign/:campaignId/calls/:callId" element={<CallDetailPage />} />
           
           {/* Analytics Routes */}
           <Route path="analytics" element={<AnalyticsDashboard />}>
@@ -126,20 +134,19 @@ export default function App() {
             <Route index element={<Navigate to="general" replace />} />
             <Route path="general" element={<GeneralSettings />} />
             <Route path="compliance" element={<ComplianceRulesEngine />} />
-            <Route path="agent-analytics" element={<AgentAnalytics agents={mockAgents} />} />
+            <Route path="agent-analytics" element={<AgentAnalytics agents={[]} />} />
             <Route path="integrations" element={<IntegrationHub />} />
             <Route path="model-training" element={<ModelTraining />} />
           </Route>
           
           {/* Service Routes */}
-          <Route path="ai-assistant" element={<AIAssistantPage />} />
+          <Route path="ai-assistant" element={<AIAssistant />} />
           <Route path="profile" element={<UserProfile />} />
           <Route path="notifications" element={<Notifications />} />
           <Route path="help" element={<HelpSupport />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
-      <AIAssistant />
     </CampaignProvider>
   );
 }

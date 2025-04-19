@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Plus, Eye, Search, Filter, Calendar, Clock, FileText, Download } from "lucide-react";
 import {
@@ -30,10 +30,11 @@ interface Report {
 export default function ReportsPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { tab } = useParams<{ tab: string }>();
+  const activeTab = tab || "all";
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState("all");
   const { selectedCampaign } = useCampaign();
   const { isFiltered, campaignName } = useCallAnalytics();
 
@@ -203,7 +204,7 @@ export default function ReportsPage() {
             </div>
           </div>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <Tabs value={activeTab} onValueChange={handleTabChange}>
             <TabsList>
               <TabsTrigger value="all">All Reports</TabsTrigger>
               <TabsTrigger value="active">Active</TabsTrigger>

@@ -49,7 +49,7 @@ export function UnifiedCampaignView() {
   const { campaignId } = useParams<{ campaignId: string }>();
   const navigate = useNavigate();
   const { selectedCampaign, setSelectedCampaign, getCampaignById } = useCampaign();
-  const { metrics, formatDuration: analyticsFormatDuration, calls } = useCallAnalytics();
+  const { metrics, calls } = useCallAnalytics();
   const [loading, setLoading] = useState(true);
   const [filterText, setFilterText] = useState('');
   const [sortField, setSortField] = useState<string>('timestamp');
@@ -197,7 +197,7 @@ export function UnifiedCampaignView() {
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{analyticsFormatDuration(metrics.avgDuration)}</div>
+            <div className="text-2xl font-bold">{formatDuration(metrics.avgDuration)}</div>
             <p className="text-xs text-muted-foreground">
               Average call duration
             </p>
