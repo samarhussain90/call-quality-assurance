@@ -4,10 +4,10 @@
 
 **Goal:** Correct the visual layout of the sidebar and remove conflicting header/sidebar elements.
 
-- Located and modified the Sidebar component (`src/components/layout/Sidebar.tsx`)
-- Reordered sidebar sections to place "Campaign Call Logs" as the first main group after "Dashboard"
-- Removed the old sidebar "Campaigns" section with static links
-- Removed the "Campaigns" tab from the header navigation in `src/components/layout/Header.tsx`
+- [x] Located and modified the Sidebar component (`src/components/layout/Sidebar.tsx`)
+- [x] Reordered sidebar sections to place "Campaign Call Logs" as the first main group after "Dashboard"
+- [x] Removed the old sidebar "Campaigns" section with static links
+- [x] Removed the "Campaigns" tab from the header navigation in `src/components/layout/Header.tsx`
 
 ## Phase 2: Implement Global State & Contextual Dashboard ✅
 
