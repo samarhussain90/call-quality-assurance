@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import * as Tabs from "@radix-ui/react-tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { 
     AlertTriangle, 
     CheckCircle, 
@@ -216,14 +216,14 @@ export function ComplianceRulesEngine() {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <Tabs.Root defaultValue={activeTab} onValueChange={setActiveTab}>
-                        <Tabs.List className="mb-4">
-                            <Tabs.Trigger value="rules">Rules</Tabs.Trigger>
-                            <Tabs.Trigger value="violations">Violations</Tabs.Trigger>
-                            <Tabs.Trigger value="settings">Settings</Tabs.Trigger>
-                        </Tabs.List>
+                    <Tabs value={activeTab} onValueChange={setActiveTab}>
+                        <TabsList className="mb-4">
+                            <TabsTrigger value="rules">Rules</TabsTrigger>
+                            <TabsTrigger value="violations">Violations</TabsTrigger>
+                            <TabsTrigger value="settings">Settings</TabsTrigger>
+                        </TabsList>
                         
-                        <Tabs.Content value="rules">
+                        <TabsContent value="rules">
                             {isEditing ? (
                                 <div className="space-y-4">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -542,9 +542,9 @@ export function ComplianceRulesEngine() {
                                     ))}
                                 </div>
                             )}
-                        </Tabs.Content>
+                        </TabsContent>
                         
-                        <Tabs.Content value="violations">
+                        <TabsContent value="violations">
                             <Card>
                                 <CardHeader>
                                     <CardTitle>Recent Violations</CardTitle>
@@ -558,9 +558,9 @@ export function ComplianceRulesEngine() {
                                     </div>
                                 </CardContent>
                             </Card>
-                        </Tabs.Content>
+                        </TabsContent>
                         
-                        <Tabs.Content value="settings">
+                        <TabsContent value="settings">
                             <Card>
                                 <CardHeader>
                                     <CardTitle>Compliance Settings</CardTitle>
@@ -597,8 +597,8 @@ export function ComplianceRulesEngine() {
                                     </div>
                                 </CardContent>
                             </Card>
-                        </Tabs.Content>
-                    </Tabs.Root>
+                        </TabsContent>
+                    </Tabs>
                 </CardContent>
             </Card>
         </div>

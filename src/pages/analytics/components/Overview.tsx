@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCallAnalytics } from "@/hooks/useCallAnalytics";
 import { useCampaign } from '@/contexts/CampaignContext';
+import { Phone, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 
 export function Overview() {
   const { selectedCampaign } = useCampaign();
@@ -19,6 +20,7 @@ export function Overview() {
             <CardTitle className="text-sm font-medium">
               Total Calls
             </CardTitle>
+            <Phone className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{metrics.totalCalls}</div>
@@ -33,6 +35,7 @@ export function Overview() {
             <CardTitle className="text-sm font-medium">
               Average Duration
             </CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatDuration(metrics.avgDuration)}</div>
@@ -47,6 +50,7 @@ export function Overview() {
             <CardTitle className="text-sm font-medium">
               Success Rate
             </CardTitle>
+            <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{metrics.successRate}%</div>
@@ -61,6 +65,7 @@ export function Overview() {
             <CardTitle className="text-sm font-medium">
               Completed Calls
             </CardTitle>
+            <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{metrics.completedCalls}</div>

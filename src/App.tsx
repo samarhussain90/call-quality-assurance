@@ -33,12 +33,10 @@ import { Notifications } from "@/pages/notifications/Notifications";
 import { HelpSupport } from "@/pages/help/HelpSupport";
 import { CommunicationIntegrations } from "@/pages/settings/components/CommunicationIntegrations";
 import { AIAssistantPage } from "@/pages/ai-assistant/AIAssistantPage";
-import { CampaignDetailPage } from "@/pages/campaigns/CampaignDetailPage";
 import { Overview } from "@/pages/analytics/components/Overview";
 import { CampaignListPage } from "@/pages/campaigns/CampaignListPage";
-import { CampaignCallsPage } from "@/pages/campaigns/CampaignCallsPage";
 import { CampaignProvider } from "@/contexts/CampaignContext";
-import { CampaignCallLogPage } from "@/pages/campaigns/CampaignCallLogPage";
+import { UnifiedCampaignView } from "@/pages/campaigns/UnifiedCampaignView";
 
 // Mock data for components that require props
 const mockAgents = [
@@ -93,9 +91,8 @@ export default function App() {
           {/* Campaign Routes */}
           <Route path="campaigns" element={<CampaignsPage />} />
           <Route path="campaigns/new" element={<NewCampaignPage />} />
-          <Route path="campaigns/:campaignId/calls" element={<CampaignCallsPage />} />
+          <Route path="campaign/:campaignId" element={<UnifiedCampaignView />} />
           <Route path="campaigns/:campaignId/calls/:callId" element={<CallDetailPage />} />
-          <Route path="call-log/:campaignId" element={<CampaignCallLogPage />} />
           
           {/* Analytics Routes */}
           <Route path="analytics" element={<AnalyticsDashboard />}>

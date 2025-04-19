@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Logo } from "@/components/layout/Logo";
+import { useCampaign } from "@/contexts/CampaignContext";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,9 +21,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { formatDistanceToNow } from "date-fns";
 import {
   Bell,
   LogOut,
@@ -57,15 +54,18 @@ const getStatusVariant = (status: string) => {
 export function Header() {
   const { user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
+  const { setSelectedCampaign } = useCampaign();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  const userInitials = user?.name
-    ? user.name
-        .split(' ')
-        .map(n => n[0])
-        .join('')
-        .toUpperCase()
-    : '??';
+  const handleCampaignSelect = (campaignId: string) => {
+    const campaign = mockCampaigns.find(c => c.id === campaignId);
+    if (campaign) {
+      setSelectedCampaign(campaign);
+      navigate(`/campaign/${campaignId}`);
+    }
+    setIsSearchOpen(false);
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -169,10 +169,7 @@ export function Header() {
             {mockCampaigns.map((campaign) => (
               <CommandItem
                 key={campaign.id}
-                onSelect={() => {
-                  setIsSearchOpen(false);
-                  // Handle campaign selection
-                }}
+                onSelect={() => handleCampaignSelect(campaign.id)}
               >
                 <div className="flex items-center">
                   <div

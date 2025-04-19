@@ -33,8 +33,8 @@ export function NewCampaignPage() {
       addCampaign(newCampaign);
       setSelectedCampaign(newCampaign);
       
-      // Navigate to the new campaign's call log
-      navigate(`/call-log/${newCampaign.id}`);
+      // Navigate to the new campaign's unified view
+      navigate(`/campaign/${newCampaign.id}`);
     } catch (error) {
       console.error('Failed to create campaign:', error);
     } finally {

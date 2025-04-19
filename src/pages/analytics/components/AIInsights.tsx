@@ -3,6 +3,7 @@ import { Card, Button, Select, Badge, Tabs, TabsList, TabsTrigger, TabsContent }
 import { AlertTriangle, TrendingUp, Lightbulb, RefreshCw, Download, Filter, X } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { toast } from '@/components/ui/use-toast';
+import { SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
 interface Insight {
   id: string;
@@ -253,86 +254,227 @@ export function AIInsights() {
       </div>
 
       <Card className="p-6">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 space-y-4 md:space-y-0">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full md:w-auto">
-            <TabsList>
-              <TabsTrigger value="all">All Insights</TabsTrigger>
-              <TabsTrigger value="anomaly">Anomalies</TabsTrigger>
-              <TabsTrigger value="trend">Trends</TabsTrigger>
-              <TabsTrigger value="recommendation">Recommendations</TabsTrigger>
-            </TabsList>
-          </Tabs>
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="grid w-full grid-cols-4 gap-4 mb-6">
+            <TabsTrigger value="all">All Insights</TabsTrigger>
+            <TabsTrigger value="anomaly">Anomalies</TabsTrigger>
+            <TabsTrigger value="trend">Trends</TabsTrigger>
+            <TabsTrigger value="recommendation">Recommendations</TabsTrigger>
+          </TabsList>
 
-          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+          <div className="flex items-center space-x-4 mb-6">
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <option value="all">All Categories</option>
-              <option value="performance">Performance</option>
-              <option value="compliance">Compliance</option>
-              <option value="customer">Customer</option>
-              <option value="financial">Financial</option>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="performance">Performance</SelectItem>
+                <SelectItem value="compliance">Compliance</SelectItem>
+                <SelectItem value="customer">Customer</SelectItem>
+                <SelectItem value="financial">Financial</SelectItem>
+              </SelectContent>
             </Select>
-            <Select value={severityFilter} onValueChange={setSeverityFilter}>
-              <option value="all">All Severities</option>
-              <option value="high">High</option>
-              <option value="medium">Medium</option>
-              <option value="low">Low</option>
-            </Select>
-          </div>
-        </div>
 
-        {loading ? (
-          <div className="flex justify-center items-center h-40">
-            <RefreshCw className="w-8 h-8 animate-spin text-gray-400" />
+            <Select value={severityFilter} onValueChange={setSeverityFilter}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Severity" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Severities</SelectItem>
+                <SelectItem value="high">High</SelectItem>
+                <SelectItem value="medium">Medium</SelectItem>
+                <SelectItem value="low">Low</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-        ) : filteredInsights.length === 0 ? (
-          <div className="text-center py-10">
-            <p className="text-gray-500">No insights match your current filters.</p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {filteredInsights.map(insight => (
-              <Card key={insight.id} className="p-4">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start space-x-3">
-                    {getInsightIcon(insight.type)}
-                    <div>
-                      <div className="flex items-center space-x-2">
-                        <h3 className="font-semibold">{insight.title}</h3>
-                        <Badge variant={getSeverityBadgeVariant(insight.severity)}>
-                          {insight.severity}
-                        </Badge>
-                        <Badge variant="outline">{insight.category}</Badge>
-                      </div>
-                      <p className="text-gray-500 mt-1">{insight.description}</p>
-                      {insight.metric && insight.value && (
-                        <div className="mt-2 flex items-center space-x-2">
-                          <span className="font-medium">{insight.metric}:</span>
-                          <span>{insight.value}</span>
-                          {insight.changePercentage && (
-                            <span className={`text-sm ${insight.changePercentage > 0 ? 'text-red-500' : 'text-green-500'}`}>
-                              {insight.changePercentage > 0 ? '+' : ''}{insight.changePercentage}%
-                            </span>
-                          )}
-                        </div>
-                      )}
-                      <p className="text-xs text-gray-400 mt-1">
-                        {formatTimestamp(insight.timestamp)}
-                      </p>
-                    </div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDismissInsight(insight.id)}
-                  >
-                    <X className="w-4 h-4" />
-                  </Button>
+
+          <TabsContent value="all">
+            <div className="space-y-4">
+              {loading ? (
+                <div className="flex items-center justify-center h-40">
+                  <RefreshCw className="w-8 h-8 animate-spin text-muted-foreground" />
                 </div>
-                {renderChart(insight)}
-              </Card>
-            ))}
-          </div>
-        )}
+              ) : filteredInsights.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  No insights found matching your filters
+                </div>
+              ) : (
+                filteredInsights.map((insight) => (
+                  <Card key={insight.id} className="p-4">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start space-x-4">
+                        {getInsightIcon(insight.type)}
+                        <div>
+                          <h3 className="font-semibold">{insight.title}</h3>
+                          <p className="text-sm text-muted-foreground">{insight.description}</p>
+                          <div className="flex items-center space-x-2 mt-2">
+                            <Badge variant={getSeverityBadgeVariant(insight.severity)}>
+                              {insight.severity}
+                            </Badge>
+                            <Badge variant="outline">{insight.category}</Badge>
+                            <span className="text-sm text-muted-foreground">
+                              {formatTimestamp(insight.timestamp)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDismissInsight(insight.id)}
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    {renderChart(insight)}
+                  </Card>
+                ))
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="anomaly">
+            <div className="space-y-4">
+              {loading ? (
+                <div className="flex items-center justify-center h-40">
+                  <RefreshCw className="w-8 h-8 animate-spin text-muted-foreground" />
+                </div>
+              ) : filteredInsights.filter(i => i.type === 'anomaly').length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  No anomalies found matching your filters
+                </div>
+              ) : (
+                filteredInsights
+                  .filter(i => i.type === 'anomaly')
+                  .map((insight) => (
+                    <Card key={insight.id} className="p-4">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start space-x-4">
+                          {getInsightIcon(insight.type)}
+                          <div>
+                            <h3 className="font-semibold">{insight.title}</h3>
+                            <p className="text-sm text-muted-foreground">{insight.description}</p>
+                            <div className="flex items-center space-x-2 mt-2">
+                              <Badge variant={getSeverityBadgeVariant(insight.severity)}>
+                                {insight.severity}
+                              </Badge>
+                              <Badge variant="outline">{insight.category}</Badge>
+                              <span className="text-sm text-muted-foreground">
+                                {formatTimestamp(insight.timestamp)}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDismissInsight(insight.id)}
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      {renderChart(insight)}
+                    </Card>
+                  ))
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="trend">
+            <div className="space-y-4">
+              {loading ? (
+                <div className="flex items-center justify-center h-40">
+                  <RefreshCw className="w-8 h-8 animate-spin text-muted-foreground" />
+                </div>
+              ) : filteredInsights.filter(i => i.type === 'trend').length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  No trends found matching your filters
+                </div>
+              ) : (
+                filteredInsights
+                  .filter(i => i.type === 'trend')
+                  .map((insight) => (
+                    <Card key={insight.id} className="p-4">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start space-x-4">
+                          {getInsightIcon(insight.type)}
+                          <div>
+                            <h3 className="font-semibold">{insight.title}</h3>
+                            <p className="text-sm text-muted-foreground">{insight.description}</p>
+                            <div className="flex items-center space-x-2 mt-2">
+                              <Badge variant={getSeverityBadgeVariant(insight.severity)}>
+                                {insight.severity}
+                              </Badge>
+                              <Badge variant="outline">{insight.category}</Badge>
+                              <span className="text-sm text-muted-foreground">
+                                {formatTimestamp(insight.timestamp)}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDismissInsight(insight.id)}
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      {renderChart(insight)}
+                    </Card>
+                  ))
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="recommendation">
+            <div className="space-y-4">
+              {loading ? (
+                <div className="flex items-center justify-center h-40">
+                  <RefreshCw className="w-8 h-8 animate-spin text-muted-foreground" />
+                </div>
+              ) : filteredInsights.filter(i => i.type === 'recommendation').length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  No recommendations found matching your filters
+                </div>
+              ) : (
+                filteredInsights
+                  .filter(i => i.type === 'recommendation')
+                  .map((insight) => (
+                    <Card key={insight.id} className="p-4">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start space-x-4">
+                          {getInsightIcon(insight.type)}
+                          <div>
+                            <h3 className="font-semibold">{insight.title}</h3>
+                            <p className="text-sm text-muted-foreground">{insight.description}</p>
+                            <div className="flex items-center space-x-2 mt-2">
+                              <Badge variant={getSeverityBadgeVariant(insight.severity)}>
+                                {insight.severity}
+                              </Badge>
+                              <Badge variant="outline">{insight.category}</Badge>
+                              <span className="text-sm text-muted-foreground">
+                                {formatTimestamp(insight.timestamp)}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDismissInsight(insight.id)}
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      {renderChart(insight)}
+                    </Card>
+                  ))
+              )}
+            </div>
+          </TabsContent>
+        </Tabs>
       </Card>
     </div>
   );

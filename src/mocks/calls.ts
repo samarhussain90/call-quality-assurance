@@ -12,6 +12,17 @@ export interface Call {
   callType?: string;
   debtAmount?: number;
   recordingUrl?: string;
+  publisherName?: string;
+  buyerName?: string;
+  customerName?: string;
+  dateOfBirth?: string;
+  email?: string;
+  employer?: string;
+  jobTitle?: string;
+  planLevel?: string;
+  legalRep?: string;
+  address?: string;
+  cost?: number;
   // Call Quality Metrics
   call_result?: string;
   overall_score?: number;
@@ -97,6 +108,17 @@ export const mockCallsByCampaign: Record<string, Call[]> = {
       callType: "Outbound",
       debtAmount: 1250.00,
       recordingUrl: "https://example.com/recordings/call-1.mp3",
+      publisherName: "Debt Collection Agency A",
+      buyerName: "Financial Services Corp",
+      customerName: "Robert Johnson",
+      dateOfBirth: "1980-05-15",
+      email: "robert.johnson@email.com",
+      employer: "Tech Solutions Inc",
+      jobTitle: "Software Engineer",
+      planLevel: "Premium",
+      legalRep: "Smith & Associates",
+      address: "123 Main St, Anytown, USA",
+      cost: 25.00,
       call_result: "Successful payment plan setup",
       overall_score: 92,
       summary: "Excellent call handling with strong compliance and customer engagement",
@@ -176,7 +198,18 @@ export const mockCallsByCampaign: Record<string, Call[]> = {
       tags: ["support", "billing"],
       callType: "Inbound",
       debtAmount: 750.00,
-      recordingUrl: "https://example.com/recordings/call-2.mp3"
+      recordingUrl: "https://example.com/recordings/call-2.mp3",
+      publisherName: "Debt Collection Agency B",
+      buyerName: "Credit Services LLC",
+      customerName: "Sarah Williams",
+      dateOfBirth: "1975-08-22",
+      email: "sarah.williams@email.com",
+      employer: "Healthcare Systems",
+      jobTitle: "Nurse",
+      planLevel: "Standard",
+      legalRep: "Johnson Legal Group",
+      address: "456 Oak Ave, Somewhere, USA",
+      cost: 20.00
     }
   ],
   "roofing": [
@@ -189,7 +222,16 @@ export const mockCallsByCampaign: Record<string, Call[]> = {
       agent: "Mike Johnson",
       notes: "No answer",
       callType: "Outbound",
-      recordingUrl: "https://example.com/recordings/call-3.mp3"
+      recordingUrl: "https://example.com/recordings/call-3.mp3",
+      publisherName: "Roofing Leads Co",
+      buyerName: "Premium Roofing Inc",
+      customerName: "Michael Brown",
+      dateOfBirth: "1990-03-10",
+      email: "michael.brown@email.com",
+      employer: "Construction Corp",
+      jobTitle: "Project Manager",
+      planLevel: "Basic",
+      cost: 15.00
     },
     {
       id: "call-4",
@@ -203,7 +245,16 @@ export const mockCallsByCampaign: Record<string, Call[]> = {
       sentiment: "positive",
       tags: ["inspection", "scheduled"],
       callType: "Inbound",
-      recordingUrl: "https://example.com/recordings/call-4.mp3"
+      recordingUrl: "https://example.com/recordings/call-4.mp3",
+      publisherName: "Home Services Network",
+      buyerName: "Elite Roofing Solutions",
+      customerName: "David Miller",
+      dateOfBirth: "1985-11-30",
+      email: "david.miller@email.com",
+      employer: "Real Estate Group",
+      jobTitle: "Property Manager",
+      planLevel: "Premium",
+      cost: 30.00
     }
   ],
   "medicare": [
@@ -219,7 +270,16 @@ export const mockCallsByCampaign: Record<string, Call[]> = {
       sentiment: "positive",
       tags: ["enrollment", "medicare-advantage"],
       callType: "Outbound",
-      recordingUrl: "https://example.com/recordings/call-5.mp3"
+      recordingUrl: "https://example.com/recordings/call-5.mp3",
+      publisherName: "Health Insurance Partners",
+      buyerName: "Medicare Solutions Inc",
+      customerName: "Elizabeth Davis",
+      dateOfBirth: "1955-04-18",
+      email: "elizabeth.davis@email.com",
+      employer: "Retired",
+      jobTitle: "N/A",
+      planLevel: "Medicare Advantage Plus",
+      cost: 35.00
     },
     {
       id: "call-6",
@@ -233,7 +293,16 @@ export const mockCallsByCampaign: Record<string, Call[]> = {
       sentiment: "neutral",
       tags: ["information-request"],
       callType: "Inbound",
-      recordingUrl: "https://example.com/recordings/call-6.mp3"
+      recordingUrl: "https://example.com/recordings/call-6.mp3",
+      publisherName: "Senior Care Network",
+      buyerName: "Medicare Benefits Corp",
+      customerName: "Thomas Wilson",
+      dateOfBirth: "1960-09-25",
+      email: "thomas.wilson@email.com",
+      employer: "Local Government",
+      jobTitle: "Administrative Assistant",
+      planLevel: "Medicare Supplement",
+      cost: 25.00
     }
   ]
 };

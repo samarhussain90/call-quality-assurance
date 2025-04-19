@@ -3,17 +3,16 @@ import { useCampaign } from '@/contexts/CampaignContext';
 import { mockCallsByCampaign, Call } from '@/mocks/calls';
 
 export function useCallAnalytics() {
-  const { selectedCampaign } = useCampaign();
+  const { selectedCampaign, isCampaignSelected } = useCampaign();
 
   const filteredCalls = useMemo(() => {
-    console.log('useCallAnalytics - selectedCampaign:', selectedCampaign);
     if (selectedCampaign) {
       const calls = mockCallsByCampaign[selectedCampaign.id] || [];
-      console.log('useCallAnalytics - filtered calls for campaign:', calls.length);
+      console.log(`Filtered calls for campaign "${selectedCampaign.name}": ${calls.length}`);
       return calls;
     }
     const allCalls = Object.values(mockCallsByCampaign).flat();
-    console.log('useCallAnalytics - all calls:', allCalls.length);
+    console.log(`Showing all calls across campaigns: ${allCalls.length}`);
     return allCalls;
   }, [selectedCampaign]);
 
@@ -80,7 +79,7 @@ export function useCallAnalytics() {
     calls: filteredCalls,
     metrics,
     formatDuration,
-    isFiltered: !!selectedCampaign,
+    isFiltered: isCampaignSelected(),
     campaignName: selectedCampaign?.name || 'All Campaigns'
   };
 } 
